@@ -23,7 +23,9 @@ android.ndk_api = 21
 
 android.permissions = WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,INTERNET
 android.enable_androidx = True
-android.arch = arm64-v8a
+
+# ИСПРАВЛЕНО: android.archs вместо android.arch
+android.archs = arm64-v8a
 
 p4a.bootstrap = sdl2
 p4a.android_gradle = True
