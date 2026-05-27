@@ -41,26 +41,29 @@ jobs:
           libncursesw5-dev \
           libffi-dev \
           libssl-dev \
-          git
+          git \
+          wget
 
     - name: Setup Android SDK
       run: |
-        # Устанавливаем Android SDK командной строки
+        # Создаём папку для SDK в домашней директории
+        mkdir -p $HOME/android-sdk/cmdline-tools
+        cd $HOME/android-sdk
+        
+        # Скачиваем command line tools
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
         unzip -q commandlinetools-linux-11076708_latest.zip
-        mkdir -p /usr/local/android-sdk/cmdline-tools
-        mv cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
-        export ANDROID_SDK_ROOT=/usr/local/android-sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
+        mv cmdline-tools cmdline-tools/latest
         
-        # Принимаем лицензии
-        yes | sdkmanager --licenses > /dev/null 2>&1
+        # Устанавливаем переменные
+        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
         
-        # Устанавливаем нужные компоненты
-        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+        # Принимаем лицензии (неинтерактивно)
+        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
         
-        echo "ANDROID_SDK_ROOT=/usr/local/android-sdk" >> $GITHUB_ENV
-        echo "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        # Устанавливаем необходимые компоненты
+        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" > /dev/null 2>&1
 
     - name: Install Python packages
       run: |
