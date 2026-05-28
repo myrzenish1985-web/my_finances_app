@@ -17,7 +17,8 @@ icon.filename = icon.png
 
 android.api = 33
 android.minapi = 21
-android.sdk = 33
+# android.sdk = 33  ← УДАЛИТЕ ЭТУ СТРОКУ (устарела)
+
 android.ndk = 25b
 android.ndk_api = 21
 
