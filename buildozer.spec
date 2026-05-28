@@ -15,9 +15,9 @@ fullscreen = 0
 
 icon.filename = icon.png
 
-android.api = 33
+android.api = 30
 android.minapi = 21
-android.ndk = 25b
+android.ndk = 23c
 android.ndk_api = 21
 
 android.permissions = WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,INTERNET
