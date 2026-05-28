@@ -24,6 +24,17 @@ jobs:
         sudo apt install -y openjdk-17-jdk
         pip install buildozer cython
 
+    - name: Accept Android licenses
+      run: |
+        # Создаём директорию и принимаем лицензии автоматически
+        mkdir -p ~/.android
+        echo "yes" | sdkmanager --licenses 2>/dev/null || true
+        
+    - name: Setup Android SDK
+      run: |
+        # Устанавливаем SDK и build-tools
+        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" || true
+        
     - name: Build APK
       run: |
         buildozer android debug
