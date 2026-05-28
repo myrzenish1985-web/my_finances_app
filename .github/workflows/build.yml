@@ -22,7 +22,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y \
-          openjdk-11-jdk \
+          openjdk-17-jdk \
           unzip \
           zip \
           autoconf \
@@ -35,6 +35,33 @@ jobs:
           libssl-dev \
           git \
           wget
+
+    - name: Setup Android SDK
+      run: |
+        # Скачиваем Android SDK командной строки
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+        unzip -q commandlinetools-linux-11076708_latest.zip
+        mkdir -p $HOME/android-sdk/cmdline-tools
+        mv cmdline-tools $HOME/android-sdk/cmdline-tools/latest
+        
+        # Устанавливаем переменные окружения
+        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+        
+        # Принимаем лицензии
+        yes | $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+        
+        # Устанавливаем build-tools (содержит aidl)
+        $HOME/android-sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" > /dev/null 2>&1
+        
+        # Добавляем build-tools в PATH (чтобы Buildozer нашел aidl)
+        echo "$HOME/android-sdk/build-tools/33.0.0" >> $GITHUB_PATH
+
+    - name: Verify aidl
+      run: |
+        which aidl || echo "aidl not in PATH, checking manually..."
+        ls -la $HOME/android-sdk/build-tools/33.0.0/aidl || echo "aidl not found"
+        $HOME/android-sdk/build-tools/33.0.0/aidl --version || echo "trying to run aidl"
 
     - name: Install Python packages
       run: |
