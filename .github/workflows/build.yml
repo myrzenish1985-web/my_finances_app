@@ -8,33 +8,58 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.10'
 
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
-        sudo apt update
-        sudo apt install -y openjdk-17-jdk
-        pip install buildozer cython
+        sudo apt-get update
+        sudo apt-get install -y \
+          python3-pip build-essential git zip unzip \
+          zlib1g-dev libncurses5-dev libstdc++6 libffi-dev libssl-dev \
+          openjdk-17-jdk libsdl2-dev libsdl2-ttf-dev \
+          libsdl2-image-dev libsdl2-mixer-dev autoconf libtool cmake
 
-    - name: Accept Android licenses
+    - name: Install Python dependencies
       run: |
-        # Создаём директорию и принимаем лицензии автоматически
-        mkdir -p ~/.android
-        echo "yes" | sdkmanager --licenses 2>/dev/null || true
-        
-    - name: Setup Android SDK
+        pip install --upgrade pip
+        pip install cython==0.29.33
+        pip install buildozer
+
+    - name: Create buildozer.spec
       run: |
-        # Устанавливаем SDK и build-tools
-        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" || true
-        
+        cat > buildozer.spec << 'EOF'
+        [app]
+        title = Мои финансы
+        package.name = myfinances
+        package.domain = org.myfinances
+        source.dir = ./my_finances
+        source.include_exts = py,png,jpg,kv,atlas,db,json
+        version = 1.0.0
+        requirements = hostpython3==3.10.14,python3==3.10.14,kivy==2.2.0,kivymd==1.1.1,plyer,sqlite3,android,pillow,pyjnius
+        orientation = portrait
+        osx.python_version = 3
+        fullscreen = 0
+
+        android.api = 33
+        android.minapi = 21
+        android.sdk = 33
+        android.ndk = 27
+        android.ndk_api = 21
+        android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
+        android.arch = arm64-v8a
+        android.accept_sdk_license = True
+
+        [buildozer]
+        log_level = 2
+        warn_on_root = 1
+        EOF
+
     - name: Build APK
       run: |
         buildozer android debug
@@ -42,5 +67,5 @@ jobs:
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: my-finances-apk
-        path: ./bin/*.apk
+        name: myfinances-apk
+        path: bin/*.apk
