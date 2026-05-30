@@ -13,13 +13,11 @@ fullscreen = 0
 android.api = 33
 android.minapi = 21
 android.sdk = 33
-android.ndk = 23b
+android.ndk = 27
 android.ndk_api = 21
 android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 android.archs = arm64-v8a
 android.accept_sdk_license = True
-
-# Отключаем компиляцию jpeg (используем системный)
 android.p4a_ignore_recipe = jpeg
 
 [buildozer]
