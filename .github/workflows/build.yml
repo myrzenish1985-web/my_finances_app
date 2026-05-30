@@ -35,6 +35,10 @@ jobs:
       run: |
         cat buildozer.spec
 
+    - name: Clean buildozer cache
+      run: |
+        rm -rf ~/.buildozer
+
     - name: Build APK
       run: |
         buildozer android debug
