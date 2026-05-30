@@ -31,13 +31,10 @@ jobs:
         pip install cython==0.29.33
         pip install buildozer
 
-    - name: Debug - show buildozer.spec
-      run: |
-        cat buildozer.spec
-
     - name: Clean buildozer cache
       run: |
         rm -rf ~/.buildozer
+        rm -rf .buildozer
 
     - name: Build APK
       run: |
